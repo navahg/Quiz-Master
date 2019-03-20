@@ -12,4 +12,22 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middleware\" />
+    <Folder Include="WebSocketManager\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="WebSockets\WebSockethandler.cs" />
+    <Compile Remove="WebSockets\WebSocketManager.cs" />
+    <Compile Remove="WebSockets\WebSocketManager.cs" />
+    <Compile Remove="Middleware\QuizHandler.cs" />
+    <Compile Remove="Middleware\TestMessageHandler.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\real-time.html" />
+    <Content Remove="wwwroot\index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\index.html" />
+  </ItemGroup>
 </Project>

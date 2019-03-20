@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Quiz_Master.Middleware;
 using Quiz_Master.Models;
 
 namespace Quiz_Master.Controllers
 {
     public class HomeController : Controller
     {
+
+
         public IActionResult Index()
         {
             return View();
@@ -25,5 +28,7 @@ namespace Quiz_Master.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
     }
+
 }
