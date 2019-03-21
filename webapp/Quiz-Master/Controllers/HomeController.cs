@@ -15,7 +15,7 @@ namespace Quiz_Master.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Quiz()
         {
             return View();
         }
