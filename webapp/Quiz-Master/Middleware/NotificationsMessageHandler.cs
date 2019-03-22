@@ -64,6 +64,8 @@ namespace Quiz_Master.Middleware
             totalClients--;
             if (totalClients == 0)
                 hasOneClient = false;
+            //Sending user information to all connected clients
+            SendMessageToAllAsync($"{{\"USERS\": {totalClients}}}").Wait();
         }
 
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
