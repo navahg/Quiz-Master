@@ -25,6 +25,10 @@ namespace Quiz_Master.Middleware
 
         private Timer timer;
 
+        private readonly int GameStartTimeout = 20;
+
+        private readonly int QuestionTimeout = 20;
+
         private bool isOpen;
 
         private bool hasOneClient;
@@ -50,7 +54,7 @@ namespace Quiz_Master.Middleware
             if (!hasOneClient)
             {
                 hasOneClient = true;
-                GameStartTimer(60).ContinueWith(_ => this.SendQuestionsIncrementally(60));
+                GameStartTimer(GameStartTimeout).ContinueWith(_ => this.SendQuestionsIncrementally(QuestionTimeout));
             }
 
             //Sending user information to all connected clients
@@ -59,26 +63,31 @@ namespace Quiz_Master.Middleware
 
         public override async Task OnDisconnected(WebSocket socket)
         {
+            int oldScore = 0;
+            score.Remove(WebSocketConnectionManager.GetId(socket), out oldScore);
             score[WebSocketConnectionManager.GetId(socket)] = 0;
             await base.OnDisconnected(socket);
             totalClients--;
             if (totalClients == 0)
+            {
                 hasOneClient = false;
+                score.Clear();
+            }
+
             //Sending user information to all connected clients
             SendMessageToAllAsync($"{{\"USERS\": {totalClients}}}").Wait();
         }
 
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
         {
-            var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            var chosenAnswer = Encoding.UTF8.GetString(buffer, 0, result.Count);
 
 
-            if (!message.StartsWith("ANSWER:") || currentQuestionIndex >= questions.Count)
+            if (chosenAnswer.Length != 1 || currentQuestionIndex >= questions.Count)
             {
                 return;
             }
             var socketId = WebSocketConnectionManager.GetId(socket);
-            var chosenAnswer = message.Substring(6);
             try
             {
                 var optionNumber = UInt16.Parse(chosenAnswer);
@@ -92,10 +101,15 @@ namespace Quiz_Master.Middleware
         public void SendQuestionsIncrementally(int interval) {
             for (int i = 0; i < questions.Count; i++)
             {
+                if (!hasOneClient)
+                {
+                    currentQuestionIndex = 0;
+                    return;
+                }
                 currentQuestionIndex = i;
                 var jsonifiedQuestion = JsonConvert.SerializeObject(questions[i]);
                 SendMessageToAllAsync($"{{\"QUESTION\": {jsonifiedQuestion}}}").Wait();
-                GameStartTimer(60).Wait();
+                GameStartTimer(QuestionTimeout).Wait();
             }
             SendScores();
         }
@@ -116,7 +130,7 @@ namespace Quiz_Master.Middleware
                     period: 1000
                 );
 
-            while (timerState.counter <= timeout)
+            while (timerState.counter < timeout && hasOneClient)
             {
                 await Task.Delay(1000);
             }
@@ -134,7 +148,7 @@ namespace Quiz_Master.Middleware
                     period: 1000
                 );
 
-            while (timerState.counter <= timeout)
+            while (timerState.counter < timeout && hasOneClient)
             {
                 Task.Delay(1000).Wait();
             }
