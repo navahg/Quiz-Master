@@ -34,7 +34,6 @@ namespace Quiz_Master.Middleware
         public NotificationsMessageHandler(WebSocketConnectionManager webSocketConnectionManager, QuestionManager _questionManager) : base(webSocketConnectionManager)
         {
 
-
             questionManager = _questionManager;
             questions = questionManager.GetAll;
             currentQuestionIndex = 0;
@@ -53,6 +52,9 @@ namespace Quiz_Master.Middleware
                 hasOneClient = true;
                 GameStartTimer(60).ContinueWith(_ => this.SendQuestionsIncrementally(60));
             }
+
+            //Sending user information to all connected clients
+            SendMessageToAllAsync($"{{\"USERS\": {totalClients}}}").Wait();
         }
 
         public override async Task OnDisconnected(WebSocket socket)
