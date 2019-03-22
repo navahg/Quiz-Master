@@ -2,8 +2,65 @@
     ViewData["Title"] = "Home Page";
 }
 
-<html>
-    <body>
-        Hello from Quiz Master!
-    </body>
-</html>
+<div>
+    <h1>Welcome to Quiz Master - 2019!</h1>
+    <div class="container" id="initialPage">
+        <button class="btn btn-lg btn-outline-primary" id="joinChannel">
+            Join Channel
+        </button>
+    </div>
+    <div class="container" id="gamePage">
+        <div class="loading row text-center" id="loadingItems">
+            <div class="spinner-grow" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="text-center" id="loaderText"></div>
+        <div class="row">
+            <button type="button" class="btn btn-secondary float-left">
+                Timer: <span class="badge badge-light" id="timer"></span>
+            </button>
+            <button type="button" class="btn btn-outline-danger float-right" id="leaveButton">
+                Quit
+            </button>
+        </div>
+        <div class="row" id="quizArea">
+            <div class="card">
+                <div class="card-body" id="questionArea">
+                    This is some text within a card body.
+                </div>
+                <ul class="list-group list-group-flush" id="answerArea">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal" tabindex="-1" role="dialog" id="scoreModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scores</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreBody"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

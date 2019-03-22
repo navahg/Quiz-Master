@@ -51,16 +51,11 @@ namespace Quiz_Master
 
             app.UseWebSockets();
 
-            //app.MapWebSocketManager("/ws", serviceProvider.GetService<QuizHandler>());
-            //app.MapWebSocketManager("/test", serviceProvider.GetService<TestMessageHandler>());
-
-
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "api/{controller}/{action}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
             app.MapWebSocketManager("/notifications", serviceProvider.GetService<NotificationsMessageHandler>());
