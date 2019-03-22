@@ -14,6 +14,9 @@ namespace Quiz_Master.Middleware
 {
     public class NotificationsMessageHandler : WebSocketHandler
     {
+
+        private readonly QuestionManager questionManager;
+
         private readonly List<Question> questions;
 
         private int currentQuestionIndex;
@@ -28,25 +31,12 @@ namespace Quiz_Master.Middleware
 
         private int totalClients;
 
-        public NotificationsMessageHandler(WebSocketConnectionManager webSocketConnectionManager) : base(webSocketConnectionManager)
+        public NotificationsMessageHandler(WebSocketConnectionManager webSocketConnectionManager, QuestionManager _questionManager) : base(webSocketConnectionManager)
         {
-            questions = new List<Question> {
-                new Question() {
-                    question = "Select option A?",
-                    answers = new string[] { "Option A", "Option B", "Option C" },
-                    correctAnswer = 0
-                },
-                new Question() {
-                    question = "Select option B?",
-                    answers = new string[] { "Option A", "Option B", "Option C" },
-                    correctAnswer = 1
-                },
-                new Question() {
-                    question = "Select option C?",
-                    answers = new string[] { "Option A", "Option B", "Option C" },
-                    correctAnswer = 2
-                }
-            };
+
+
+            questionManager = _questionManager;
+            questions = questionManager.GetAll;
             currentQuestionIndex = 0;
             isOpen = true;
             hasOneClient = false;
@@ -77,6 +67,8 @@ namespace Quiz_Master.Middleware
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
         {
             var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+
             if (!message.StartsWith("ANSWER:") || currentQuestionIndex >= questions.Count)
             {
                 return;
