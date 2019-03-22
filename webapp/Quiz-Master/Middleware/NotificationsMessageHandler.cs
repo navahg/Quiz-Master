@@ -21,7 +21,8 @@ namespace Quiz_Master.Middleware
 
         private int currentQuestionIndex;
 
-        private ConcurrentDictionary<string, int> score = new ConcurrentDictionary<string, int>();
+        private ConcurrentDictionary<string, int> score;
+        private ConcurrentDictionary<string, string> names;
 
         private Timer timer;
 
@@ -40,6 +41,8 @@ namespace Quiz_Master.Middleware
 
             questionManager = _questionManager;
             questions = questionManager.GetAll;
+            score = new ConcurrentDictionary<string, int>();
+            names = new ConcurrentDictionary<string, string>();
             currentQuestionIndex = 0;
             isOpen = true;
             hasOneClient = false;
@@ -81,21 +84,25 @@ namespace Quiz_Master.Middleware
         public override async Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer)
         {
             var chosenAnswer = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
-
-            if (chosenAnswer.Length != 1 || currentQuestionIndex >= questions.Count)
-            {
-                return;
-            }
             var socketId = WebSocketConnectionManager.GetId(socket);
-            try
+
+            if (chosenAnswer.StartsWith("USERNAME:"))
             {
-                var optionNumber = UInt16.Parse(chosenAnswer);
-                if (optionNumber == questions[currentQuestionIndex].correctAnswer)
+                var username = chosenAnswer.Substring(9);
+                names[socketId] = username;
+            }
+            else
+            {
+                try
                 {
-                    score[socketId] = score[socketId] + 1;
+                    var optionNumber = UInt16.Parse(chosenAnswer);
+                    if (optionNumber == questions[currentQuestionIndex].correctAnswer)
+                    {
+                        score[socketId] = score[socketId] + 1;
+                    }
                 }
-            } catch { }
+                catch { }
+            }
         }
 
         public void SendQuestionsIncrementally(int interval) {
@@ -116,7 +123,21 @@ namespace Quiz_Master.Middleware
 
         public void SendScores()
         {
-            var jsonifiedScores = JsonConvert.SerializeObject(score);
+            var scoreList = new ConcurrentDictionary<string, int>();
+
+            foreach (KeyValuePair<string, int> entry in score)
+            {
+                var name = entry.Key;
+
+                if (names.ContainsKey(entry.Key))
+                {
+                    name = names[entry.Key];
+                }
+
+                scoreList[name] = entry.Value;
+            }
+
+            var jsonifiedScores = JsonConvert.SerializeObject(scoreList);
             SendMessageToAllAsync($"{{\"SCORES\": {jsonifiedScores}}}").Wait();
         }
 

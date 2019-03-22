@@ -21,6 +21,8 @@ let $userCountArea;
 let $scoreModal;
 let $scoreBody;
 
+let $usernameInput;
+
 let answerChosen = false;
 let currentQuestion = {};
 
@@ -46,10 +48,18 @@ function initializeVariables() {
 
     $scoreModal = $('#scoreModal');
     $scoreBody = $('#scoreBody');
+
+    $usernameInput = $('#usernameInput');
 }
 
 function initializeListeners() {
     $joinButton.click(function () {
+
+        if ($usernameInput.val() === '') {
+            window.alert('Please enter your name to join.');
+            return;
+        }
+
         if (socket != null) {
             disconnect();
         }
@@ -57,6 +67,8 @@ function initializeListeners() {
         socket = new WebSocket(socketURL);
 
         socket.onopen = function (_) {
+            socket.send(`USERNAME:${$usernameInput.val()}`);
+
             $initialView.hide();
             $gameView.show();
 

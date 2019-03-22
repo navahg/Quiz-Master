@@ -9,10 +9,13 @@
                 <h5 class="card-title">Welcome to Quiz Master 2019!</h5>
                 <h6 class="card-subtitle mb-2 text-muted">Instructions</h6>
                 <p class="card-text">
+                    Enter your name in the <b>Username</b> text box.
+                </p>
+                <p class="card-text">
                     Click the <b>Join Channel</b> button to compete with other players who are online.
                 </p>
                 <p class="card-text">
-                    The timer will start when the first player joins the channel. You then have <b>20 seconds</b> before the quiz starts.
+                    The timer will start when the first player joins the channel. You will then have <b>20 seconds</b> before the quiz starts.
                 </p>
                 <p class="card-text">
                     You will then have <b>20 seconds</b> for each question before the Quiz Master moves on to the next question.
@@ -20,12 +23,18 @@
                 <p class="card-text">
                     Once all the questions are answered, the final score will be shown.
                 </p>
+                <p class="card-text">
+                    <em style="text-decoration: underline;">Note: You cannot change your answer once it is selected. So, think well before answering.</em>
+                </p>
             </div>
             <div class="card-footer text-muted text-center">
                 Let us get started!
             </div>
         </div>
         <div class="container d-flex flex-column justify-content-center align-items-center mt-5 ml-auto mr-auto" id="initialPage">
+            <div class="input-group mb-3 w-50">
+                <input type="text" class="form-control" placeholder="Username" id="usernameInput">
+            </div>
             <button class="btn btn-lg btn-outline-primary w-50" id="joinChannel">
                 Join Channel
             </button>
