@@ -139,6 +139,7 @@ namespace Quiz_Master.Middleware
 
             var jsonifiedScores = JsonConvert.SerializeObject(scoreList);
             SendMessageToAllAsync($"{{\"SCORES\": {jsonifiedScores}}}").Wait();
+            DisconnectAllAsync().Wait();
         }
 
         public async Task GameStartTimer(int timeout) {

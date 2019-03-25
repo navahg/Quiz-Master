@@ -52,6 +52,15 @@ namespace WebSocketsManager
             }
         }
 
+        public async Task DisconnectAllAsync()
+        {
+            foreach (var pair in WebSocketConnectionManager.GetAll())
+            {
+                if (pair.Value.State == WebSocketState.Open)
+                    await pair.Value.CloseAsync(WebSocketCloseStatus.NormalClosure, String.Empty, CancellationToken.None);
+            }
+        }
+
         //TODO - decide if exposing the message string is better than exposing the result and buffer
         public abstract Task ReceiveAsync(WebSocket socket, WebSocketReceiveResult result, byte[] buffer);
     }

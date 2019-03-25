@@ -119,7 +119,7 @@ function leaveQuiz() {
 }
 
 function disconnect() {
-    if (socket == null) {
+    if (socket === null || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
         return;
     }
     typeof socket.close === 'function' && socket.close();
